@@ -18,15 +18,21 @@
   ],
   "userConfig": {
     "rag_api_url": {
+      "title": "RAG API URL",
       "description": "RAG API server URL (e.g. http://localhost:3100 or https://rag.example.com)",
+      "type": "string",
       "sensitive": false
     },
     "rag_api_key": {
+      "title": "RAG API Key",
       "description": "API key for RAG API authentication",
+      "type": "string",
       "sensitive": true
     },
     "project_name": {
+      "title": "Project Name",
       "description": "Project identifier for collection namespacing (e.g. 'myapp')",
+      "type": "string",
       "sensitive": false
     }
   }
