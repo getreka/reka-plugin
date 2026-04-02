@@ -1,0 +1,29 @@
+{
+  "name": "reka-plugins",
+  "owner": {
+    "name": "Reka",
+    "email": "hello@getreka.dev"
+  },
+  "metadata": {
+    "description": "RAG-powered AI development tools — semantic search, project memory, architecture decisions, and coding workflows",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "reka",
+      "source": ".",
+      "description": "RAG-powered AI development: semantic search, project memory, architecture decisions, and coding workflows",
+      "version": "0.1.0",
+      "category": "developer-tools",
+      "tags": [
+        "rag",
+        "memory",
+        "semantic-search",
+        "architecture",
+        "mcp",
+        "coding-agent"
+      ],
+      "keywords": ["rag", "memory", "semantic-search", "architecture", "mcp"]
+    }
+  ]
+}

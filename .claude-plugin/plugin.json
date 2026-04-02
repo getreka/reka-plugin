@@ -1,0 +1,33 @@
+{
+  "name": "reka",
+  "version": "0.1.0",
+  "description": "RAG-powered AI development: semantic search, project memory, architecture decisions, and coding workflows",
+  "author": {
+    "name": "Reka",
+    "url": "https://getreka.dev"
+  },
+  "repository": "https://github.com/getreka/reka-plugin",
+  "license": "BSL-1.1",
+  "keywords": [
+    "rag",
+    "memory",
+    "semantic-search",
+    "architecture",
+    "mcp",
+    "coding-agent"
+  ],
+  "userConfig": {
+    "rag_api_url": {
+      "description": "RAG API server URL (e.g. http://localhost:3100 or https://rag.example.com)",
+      "sensitive": false
+    },
+    "rag_api_key": {
+      "description": "API key for RAG API authentication",
+      "sensitive": true
+    },
+    "project_name": {
+      "description": "Project identifier for collection namespacing (e.g. 'myapp')",
+      "sensitive": false
+    }
+  }
+}
