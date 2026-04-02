@@ -13,10 +13,36 @@ Reka connects Claude Code to your project's RAG infrastructure, giving the AI as
 
 ## Installation
 
-### From marketplace
+### Step 1: Add marketplace
 
-```bash
-claude plugin install reka@<marketplace>
+```
+/plugin marketplace add getreka/reka-plugin
+```
+
+### Step 2: Install plugin
+
+```
+/plugin install reka@reka-plugins
+```
+
+### Auto-install for team (project settings)
+
+Add to `.claude/settings.json` to auto-discover for everyone:
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "reka-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "getreka/reka-plugin"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "reka@reka-plugins": true
+  }
+}
 ```
 
 ### Local development
