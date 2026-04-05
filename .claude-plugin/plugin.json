@@ -1,6 +1,6 @@
 {
   "name": "reka",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "RAG-powered AI development: semantic search, project memory, architecture decisions, and coding workflows",
   "author": {
     "name": "Reka",
@@ -21,6 +21,7 @@
       "title": "RAG API URL",
       "description": "RAG API server URL (e.g. http://localhost:3100 or https://rag.example.com)",
       "type": "string",
+      "default": "http://localhost:3100",
       "sensitive": false
     },
     "rag_api_key": {
