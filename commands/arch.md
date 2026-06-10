@@ -45,7 +45,7 @@ Based on the decision type:
 For rigorous multi-position analysis, use:
 
 ```
-tribunal_debate(
+mcp__plugin_reka_rag__tribunal_debate(
   topic: "<the question>",
   positions: ["Option A", "Option B"],
   context: "<constraints>",

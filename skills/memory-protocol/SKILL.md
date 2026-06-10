@@ -1,18 +1,29 @@
 ---
 name: memory-protocol
-description: "Shared memory protocol for all Reka skills. NOT user-invocable — loaded by other skills as a reference. Defines session lifecycle, smart remember with relationship detection, memory type selection, structured facts, and quarantine awareness."
+description: "Shared RAG Memory Protocol reference doc — NOT model-invocable and NOT auto-triggered. When a command or skill says 'follow the Memory Protocol' or 'see the memory-protocol skill', READ this file directly by path (skills/memory-protocol/SKILL.md) and apply it. Defines session lifecycle, smart remember with relationship detection, memory type selection, structured facts, graph-aware recall, and quarantine awareness."
 disable-model-invocation: true
 ---
 
 # RAG Memory Protocol
 
-This is a shared reference for all Reka skills and commands. Read it when another skill says "follow the Memory Protocol" or references this file.
+This is a shared **reference document**, not an invocable skill. It has `disable-model-invocation: true`, so it is never auto-triggered and cannot be launched as a skill — a command referencing "the memory-protocol skill" will not resolve to a runnable action. Instead, when another command or skill says "follow the Memory Protocol" (or references this file), READ it directly by its path — `skills/memory-protocol/SKILL.md` — and apply the rules below inline.
 
 ## Why this protocol exists
 
 The project has a human-memory-inspired architecture with 4 phases: sensory buffer, working memory, consolidation agent, and long-term memory (episodic + semantic). Without this protocol, skills use only ~30% of these capabilities — sessions aren't started, memories aren't typed properly, quarantine fills up and gets deleted, structured facts aren't populated, and memory relationships degrade into flat duplicates.
 
 Following this protocol means the full architecture works as designed.
+
+---
+
+## 0. Which memory system (avoid double-writing)
+
+There are two distinct memory systems — this protocol governs only the first:
+
+- **Team-shared RAG memory** (`remember` / `recall` / `record_adr` / etc.): the project-scoped, vector-indexed long-term store described in this document. Use it for findings, decisions, patterns, and facts that the team — and future sessions across machines — should retrieve. This is the system this protocol covers.
+- **Native Claude Code auto-memory** (the local `MEMORY.md` the harness maintains): personal, machine-local notes the harness writes and reads automatically. It is not project-shared and is not searchable via `recall`.
+
+Do NOT write the same content to both. When the protocol says `remember` / `recall`, it always means the RAG tools above. Let the native auto-memory be managed by the harness on its own; don't mirror RAG memories into it or vice versa, or the two will drift and duplicate.
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: code-reviewer
-description: Reviews code against project patterns, ADRs, and best practices. Use after significant changes or before merging.
-tools: Read, Grep, Glob
+description: Reviews code against project patterns, ADRs, and best practices. Call this agent when the user asks to review a diff, branch, or PR, or right before commit after a multi-file change. Do NOT call it for trivial single-line edits or while code is still being written.
+tools: Read, Grep, Glob, mcp__plugin_reka_rag__context_briefing, mcp__plugin_reka_rag__search_codebase, mcp__plugin_reka_rag__get_adrs, mcp__plugin_reka_rag__get_patterns
 model: sonnet
 memory: project
 ---

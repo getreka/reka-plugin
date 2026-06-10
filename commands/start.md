@@ -1,5 +1,5 @@
 ---
-description: "Start a RAG session and display current status. Use at the beginning of work or when you need to check session state. Triggers on: 'start session', 'розпочни', 'rag start', 'session status'."
+description: "Start a RAG session and display current status. User-invoked at the beginning of work or to check session state."
 disable-model-invocation: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: test-writer
-description: Generate tests for project code. Auto-detects test framework (vitest, jest, mocha) from project configuration. Use after implementing new features.
+description: Generate tests for project code. Auto-detects test framework (vitest, jest, mocha) from project configuration. Call this agent when the user asks to write or add tests, or right after a feature/bugfix lands and needs test coverage. Do NOT call it just to run an existing suite.
 tools: Read, Write, Edit, Grep, Glob, Bash
 model: sonnet
 memory: project

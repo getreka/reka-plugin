@@ -45,7 +45,7 @@ From user's message, identify:
 ### Step 2: Configure and run
 
 ```
-tribunal_debate(
+mcp__plugin_reka_rag__tribunal_debate(
   topic: "<the question>",
   positions: ["Option A", "Option B", "Option C"],
   context: "<user's context>",
