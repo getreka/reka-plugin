@@ -1,6 +1,6 @@
 ---
 name: rag-workflows
-description: "Search priority and tool selection guide for RAG-powered development. Auto-triggers when working with RAG tools — semantic search, memory recall, codebase indexing, graph traversal. Helps choose the right tool for the right task."
+description: "Search priority and tool-selection guide for RAG-powered development. Read this BEFORE your first RAG search in a session, or whenever you are unsure which tool to use among Grep/Glob, find_symbol, hybrid_search, search_graph, context_briefing, or smart_dispatch. It maps each kind of question (exact string, symbol lookup, conceptual 'how does X work', dependency/blast-radius, pre-edit briefing) to the right tool so you do not default to semantic search for everything."
 ---
 
 # RAG Workflow Guide

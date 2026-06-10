@@ -1,5 +1,5 @@
 ---
-description: "RAG-powered coding workflow for any project codebase. MUST be used whenever the user asks to write, modify, fix, refactor, or review code — including Ukrainian instructions like 'зроби', 'реалізуй', 'додай', 'поміняй', 'виправи', 'оптимізуй', 'рефактор', 'перевір код', 'рев'ю', or English like 'implement', 'add', 'fix', 'refactor', 'update', 'change', 'build', 'create', 'review'. Use this skill even for short direct instructions like 'add field X to model Y' — any task that will result in code edits needs this workflow."
+description: "RAG-powered coding workflow that loads project context (patterns, ADRs, blast radius) before writing code. Use for non-trivial changes: multi-file edits, a new feature or dependency, or any change where existing project patterns or ADRs could alter the approach (e.g. 'implement endpoint', 'add retry logic', 'refactor the service layer', Ukrainian 'реалізуй', 'рефактор', 'додай фічу'). Do NOT invoke for mechanical single-line edits — typos, renames, version bumps, formatting — handle those directly with Edit. When unsure whether project context matters, prefer this workflow."
 ---
 
 # RAG Code Workflow
@@ -8,13 +8,16 @@ Write, modify, or review code with full project context from RAG.
 
 ## When to use
 
-Any time code will be written or modified. This includes:
+For non-trivial code changes where project context matters. This includes:
 
 - Feature implementation ("implement endpoint", "add retry logic")
 - Bug fixes ("fix the timeout issue")
 - Refactoring ("refactor the service layer")
 - Code review ("review the diff", "check my changes")
-- Small changes ("add field X", "change type to Y")
+- Changes touching multiple files, a new dependency, or shared interfaces
+
+Skip this workflow for mechanical single-line edits (typos, renames, version
+bumps, formatting) — make those directly with Edit.
 
 ## Memory Protocol
 
@@ -26,7 +29,7 @@ This skill follows the RAG Memory Protocol (see `memory-protocol` skill). Key po
 - **Structured facts**: include factEntities and factDateTs in metadata
 - **graphRecall: true**: always, for spreading activation
 
-## Phase 1: Context (always do this)
+## Phase 1: Context (gather before non-trivial changes)
 
 If no active RAG session exists, start one first: `start_session(initialContext: '<task description>')`. If it times out, continue without it — your explicit `remember()` calls still go to durable.
 
@@ -38,7 +41,7 @@ Before doing fresh research, check if `/reka:investigate` already analyzed this 
 recall(query: "<task keywords> investigation-result", graphRecall: true)
 ```
 
-ALWAYS call this recall. If investigation results exist, they contain root cause analysis, proposed fixes, blast radius, and evidence — all ready to use. Skip to Phase 2 or Phase 3.
+Call this recall when the task may have been investigated already. If investigation results exist, they contain root cause analysis, proposed fixes, blast radius, and evidence — all ready to use. Skip to Phase 2 or Phase 3.
 
 If no investigation results found, proceed with full context gathering below.
 
@@ -77,6 +80,13 @@ Write code using standard tools (Read, Edit, Write, Bash). Follow:
 - Patterns from `context_briefing` results
 - ADRs from `context_briefing` results
 
+### Delegate large work
+
+For a multi-file change or more than ~100 new lines, delegate the
+implementation to the **feature-builder** agent and the test work to the
+**test-writer** agent (via the Task tool), then synthesize their results. For
+small, focused changes, implement directly here.
+
 ## Phase 4: Verify
 
 After implementation:
@@ -86,9 +96,11 @@ After implementation:
 
 For review-only tasks: read the code, compare against patterns and ADRs, present findings with severity levels (Critical/Warning/Info).
 
-## Phase 5: Remember (NEVER skip this)
+## Phase 5: Remember
 
-After every session with code edits, save what the consolidation agent can't infer automatically.
+After a session with meaningful code edits, save what the consolidation agent
+can't infer automatically (key decisions, non-obvious gotchas). Skip this for
+trivial edits that produced no durable knowledge.
 
 ### Check for existing memories first (smart remember)
 

@@ -1,5 +1,5 @@
 ---
-description: "Deep codebase investigation using RAG — find implementations, trace dependencies, understand how things work, debug errors, analyze root causes, and propose solutions WITHOUT implementing them. MUST be used when the user asks questions about the codebase, wants to understand something, investigate a bug, or trace a problem. Triggers on: 'як працює', 'де знаходиться', 'знайди', 'дослідж', 'how does', 'where is', 'find', 'trace', 'why', 'explain', 'error', 'debug', 'investigate', 'root cause', 'analyze', 'diagnose'. Also triggers when the user pastes an error message, stack trace, or log output. This skill NEVER writes or modifies code — it saves findings to RAG memory so the user can continue with /reka:code."
+description: "Deep, multi-file codebase investigation using RAG — trace dependencies across modules, understand how a subsystem works end-to-end, and find the root cause behind a pasted stack trace or error. Use for cross-module 'how does X work', root-cause analysis of an error/log/stack trace, or research that spans several files (e.g. 'дослідж', 'why does X happen', 'trace the call chain', 'root cause of this exception'). Do NOT invoke for a single-symbol lookup answerable with one Grep or find_symbol ('where is function foo', 'find the User type') — answer those directly. If the user asks to investigate AND fix, do the investigation then proceed to the fix; do not dead-end at a handoff."
 ---
 
 # RAG Investigation
@@ -8,7 +8,12 @@ Find implementations, trace dependencies, understand code, debug errors, and pro
 
 ## Core principle
 
-**Investigate, don't implement.** This skill produces analysis, root causes, and proposed solutions. It saves everything to RAG memory so the work isn't lost. When the user is ready to act, they continue with `/reka:code` which automatically picks up investigation results.
+**Investigate first.** This skill produces analysis, root causes, and proposed
+solutions, and saves everything to RAG memory so the work isn't lost. When the
+user asked only to understand or diagnose, stop after the handoff and let them
+decide when to implement. When the user asked to investigate **and** fix in the
+same request, complete the investigation, then proceed to the fix (following the
+`/reka:code` flow) rather than dead-ending at a handoff.
 
 ## Memory Protocol
 
@@ -47,14 +52,17 @@ recall(query: "<topic keywords> investigation-result", graphRecall: true)
 
 If found, present to user: "A previous investigation on this topic exists. Build on it or start fresh?"
 
-## Step 3: Broad search (parallel via Agent tool)
+## Step 3: Broad search
 
-Launch 2-3 parallel searches using the **Agent tool** (subagent_type: "Explore"):
+When the investigation spans multiple modules or needs several independent
+searches, delegate to the **rag-researcher** agent (via the Task tool) — launch
+2-3 in parallel, then synthesize their findings. For a narrow question you can
+answer with one or two searches, run the tools directly without delegating.
 
 ```
-Agent 1 (Explore): hybrid_search("<query>") + find_symbol("<symbol>")
-Agent 2 (Explore): search_graph("<file>", expandHops: 2)
-Agent 3 (Explore): recall("<query>", graphRecall: true) + get_adrs("<topic>")
+Agent 1 (rag-researcher): hybrid_search("<query>") + find_symbol("<symbol>")
+Agent 2 (rag-researcher): search_graph("<file>", expandHops: 2)
+Agent 3 (rag-researcher): recall("<query>", graphRecall: true) + get_adrs("<topic>")
 ```
 
 For **Debug/Diagnose** specifically, also run:
@@ -106,7 +114,7 @@ remember(
 
 The tag `investigation-result` bridges this skill and `/reka:code`.
 
-## Step 7: Handoff (NEVER skip)
+## Step 7: Handoff
 
 ```
 ## Next steps
@@ -117,7 +125,9 @@ Investigation saved to RAG memory. To implement the fix:
 The coding workflow will automatically load these investigation results.
 ```
 
-**Do NOT start writing or modifying code.** The user decides when to implement.
+If the user asked only to understand or diagnose, stop here — let them decide
+when to implement. If the user explicitly asked to investigate **and** fix,
+skip the handoff and proceed to implement the fix using the `/reka:code` flow.
 
 ## Language
 

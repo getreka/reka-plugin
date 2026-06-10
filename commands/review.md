@@ -39,6 +39,10 @@ Also load in parallel:
 
 ### Step 3: Review
 
+For a diff spanning more than ~5 files, delegate the per-file review to the
+**code-reviewer** agent (via the Task tool) and synthesize its findings into the
+report below. For smaller diffs, review directly here.
+
 For each changed file, check against:
 
 - [ ] Follows established architectural patterns (from `get_patterns`)
