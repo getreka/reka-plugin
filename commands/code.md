@@ -138,10 +138,15 @@ If tech debt was introduced: `record_tech_debt(title, description, location, imp
 
 Before any database/schema changes:
 
-1. `get_table_info(tableName)` — current structure
-2. `get_db_rules` — rules and constraints
-3. `check_db_schema(change)` — validate the proposed change
-   After migration: `record_table` to update schema documentation.
+1. `recall(query: "<table name> schema", graphRecall: true)` — prior schema
+   knowledge. Convention: DB facts are saved with tags `db-schema` and
+   `db-rule`, so include the table name and those tags in the query.
+2. Read the actual migration files / schema definitions for current structure.
+3. Validate the proposed change against any recalled rules and constraints.
+
+After migration: `remember` the new structure and any constraints with
+`tags: ["db-schema", "<table>"]` (rules get `tags: ["db-rule", "<table>"]`)
+so future sessions can recall them.
 
 ## Language
 
