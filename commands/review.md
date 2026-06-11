@@ -54,8 +54,8 @@ For each changed file, check against:
 - [ ] No hardcoded config values
 - [ ] Test coverage for new code paths
 
-Use `search_codebase` to find similar implementations and check consistency.
-Use `explain_code(file, startLine, endLine)` for complex sections.
+Use `hybrid_search` to find similar implementations and check consistency.
+For complex sections, Read the surrounding code and use `hybrid_search` for related context.
 
 ### Step 4: Report
 

@@ -65,7 +65,7 @@ Monitor with **`get_index_status`** — may take several minutes for large codeb
 
 1. `find_symbol("<main export>")` — verify symbol index
 2. `search_graph("<core module>")` — verify graph edges
-3. `explain_code("<entry file>")` — verify RAG-enriched explanations
+3. `hybrid_search("<entry file> responsibilities")` + Read the entry file — verify RAG-enriched retrieval
 
 ### Step 6: Report
 
