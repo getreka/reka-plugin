@@ -1,6 +1,6 @@
 ---
 name: rag-researcher
-description: Researches codebases through RAG tools — understands architecture, finds implementations, traces dependencies, and analyzes patterns. Call this agent when the user asks a cross-file "how does X work", "where is X", or "what depends on X" question that needs semantic search, dependency graphs, and project memory — not a simple grep. Do NOT call it for single-file lookups or exact-string searches you can do directly.
+description: Delegation target for /reka:investigate Step 3 — researches codebases through RAG tools (semantic search, dependency graphs, project memory). Invoke via Task for cross-file research that needs several independent searches run in parallel; for direct user requests prefer the /reka:investigate workflow, which delegates here when appropriate. Do NOT use it for single-file lookups or exact-string searches you can do directly.
 tools: Read, Grep, Glob, mcp__plugin_reka_rag__context_briefing, mcp__plugin_reka_rag__hybrid_search, mcp__plugin_reka_rag__search_graph, mcp__plugin_reka_rag__find_symbol, mcp__plugin_reka_rag__search_codebase, mcp__plugin_reka_rag__recall, mcp__plugin_reka_rag__remember, mcp__plugin_reka_rag__get_adrs, mcp__plugin_reka_rag__get_patterns
 model: haiku
 memory: project

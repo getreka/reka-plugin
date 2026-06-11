@@ -1,6 +1,6 @@
 ---
 name: feature-builder
-description: Implements features with RAG architectural context. Loads patterns, ADRs, and related code before writing. Call this agent when the user asks to build new functionality or implement a feature that spans multiple files and should follow established project conventions. Do NOT call it for one-line tweaks or pure research/review tasks.
+description: Delegation target for /reka:code Phase 3 — implements features with RAG architectural context (loads patterns, ADRs, and related code before writing). Invoke via Task for multi-file implementations or changes over ~100 new lines; for direct user requests prefer the /reka:code workflow, which delegates here when appropriate. Do NOT use it for one-line tweaks or pure research/review tasks.
 tools: Read, Write, Edit, Grep, Glob, Bash, mcp__plugin_reka_rag__context_briefing, mcp__plugin_reka_rag__remember, mcp__plugin_reka_rag__record_adr, mcp__plugin_reka_rag__record_pattern
 model: sonnet
 memory: project
