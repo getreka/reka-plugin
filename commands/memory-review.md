@@ -29,7 +29,6 @@ start_session(initialContext: "memory review and maintenance")
 |------------|-------|--------|
 | Durable | {N} | {ok/low/high} |
 | Quarantine | {N} | {needs review if > 20} |
-| Episodic LTM | {N} | ok |
 | Semantic LTM | {N} | ok |
 
 Quarantine: {N} pending ({days until oldest expires})

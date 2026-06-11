@@ -35,7 +35,6 @@ Create directory structure if needed:
 ├── procedures/      # Step-by-step how-to knowledge
 ├── tech-debt/       # Known technical debt
 ├── context/         # Background context
-├── episodes/        # Episodic memories (session summaries)
 ├── notes/           # General notes
 └── _index.md        # Auto-generated vault index
 ```
@@ -56,7 +55,7 @@ For each memory, create a `.md` file:
 ---
 id: <memory-id>
 type: <decision|insight|pattern|procedure|context|note>
-layer: <durable|episodic|semantic>
+layer: <durable|semantic>
 tags: [<tags>]
 created: <ISO date>
 source: rag-memory

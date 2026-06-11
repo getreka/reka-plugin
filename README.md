@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Claude_Code-Plugin-7C3AED?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0wIDE4Yy00LjQyIDAtOC0zLjU4LTgtOHMzLjU4LTggOC04IDggMy41OCA4IDgtMy41OCA4LTggNHoiLz48L3N2Zz4=" alt="Claude Code Plugin"/>
-  <img src="https://img.shields.io/badge/version-0.1.0-blue?style=for-the-badge" alt="Version"/>
+  <img src="https://img.shields.io/badge/version-0.2.0-blue?style=for-the-badge" alt="Version"/>
   <img src="https://img.shields.io/badge/license-BSL--1.1-green?style=for-the-badge" alt="License"/>
 </p>
 
@@ -19,14 +19,13 @@ Reka is a [Claude Code plugin](https://code.claude.com/docs/en/plugins) that con
 
 ### What you get
 
-| Capability | How it works |
-|---|---|
-| **Semantic search** | Search code, docs, and Confluence by meaning, not just keywords |
-| **Project memory** | Decisions, patterns, and insights persist across sessions via Ebbinghaus-inspired retention |
-| **Architecture awareness** | ADRs, dependency graphs, blast radius analysis before every change |
-| **Structured workflows** | 5-phase coding, deep investigation, tribunal debates, and more |
-| **Auto session lifecycle** | Hooks start/end RAG sessions automatically, trigger memory consolidation |
-| **Quality gates** | Auto-format with Prettier, TypeScript type-check on every edit |
+| Capability                 | How it works                                                                                |
+| -------------------------- | ------------------------------------------------------------------------------------------- |
+| **Semantic search**        | Search code, docs, and Confluence by meaning, not just keywords                             |
+| **Project memory**         | Decisions, patterns, and insights persist across sessions via Ebbinghaus-inspired retention |
+| **Architecture awareness** | ADRs, dependency graphs, blast radius analysis before every change                          |
+| **Structured workflows**   | 5-phase coding, deep investigation, tribunal debates, and more                              |
+| **Auto session lifecycle** | Hooks start/end RAG sessions automatically, trigger memory consolidation                    |
 
 ---
 
@@ -48,11 +47,11 @@ Reka is a [Claude Code plugin](https://code.claude.com/docs/en/plugins) that con
 
 On first enable, Claude Code prompts for three settings:
 
-| Setting | Description | Example |
-|---|---|---|
-| **RAG API URL** | Your RAG API server | `http://localhost:3100` |
-| **RAG API Key** | Authentication key (stored in OS keychain) | `e699194c-...` |
-| **Project Name** | Collection namespace | `myapp` |
+| Setting          | Description                                | Example                 |
+| ---------------- | ------------------------------------------ | ----------------------- |
+| **RAG API URL**  | Your RAG API server                        | `http://localhost:3100` |
+| **RAG API Key**  | Authentication key (stored in OS keychain) | `e699194c-...`          |
+| **Project Name** | Collection namespace                       | `myapp`                 |
 
 ### Team auto-install
 
@@ -77,45 +76,45 @@ Add to your project's `.claude/settings.json` so everyone gets it automatically:
 
 ### Coding & Review
 
-| Command | Description |
-|---|---|
-| `/reka:code` | 5-phase workflow: context → plan → implement → verify → remember |
+| Command             | Description                                                              |
+| ------------------- | ------------------------------------------------------------------------ |
+| `/reka:code`        | 5-phase workflow: context → plan → implement → verify → remember         |
 | `/reka:investigate` | Deep research — find, trace, debug. Saves to memory, never modifies code |
-| `/reka:review` | Architecture-aware code review against patterns and ADRs |
+| `/reka:review`      | Architecture-aware code review against patterns and ADRs                 |
 
 ### Architecture
 
-| Command | Description |
-|---|---|
-| `/reka:arch` | Record and analyze architecture decisions (ADRs) |
+| Command        | Description                                                       |
+| -------------- | ----------------------------------------------------------------- |
+| `/reka:arch`   | Record and analyze architecture decisions (ADRs)                  |
 | `/reka:debate` | Adversarial tribunal debate for complex decisions (2-4 positions) |
 
 ### Session & Memory
 
-| Command | Description |
-|---|---|
-| `/reka:start` | Start a RAG session, display project stats |
-| `/reka:end` | Save knowledge, close session, trigger memory consolidation |
-| `/reka:memory-review` | Triage quarantine queue, promote/reject auto-extracted memories |
+| Command               | Description                                                             |
+| --------------------- | ----------------------------------------------------------------------- |
+| `/reka:start`         | Display session status and project stats (sessions auto-start via hook) |
+| `/reka:end`           | Save knowledge, close session, trigger memory consolidation             |
+| `/reka:memory-review` | Triage quarantine queue, promote/reject auto-extracted memories         |
 
 ### Setup
 
-| Command | Description |
-|---|---|
+| Command         | Description                                            |
+| --------------- | ------------------------------------------------------ |
 | `/reka:onboard` | Set up RAG for a new project: configure, index, verify |
-| `/reka:restart-api` | Rebuild and restart local rag-api server |
 
 ---
 
 ## Agents
 
-| Agent | Model | Purpose |
-|---|---|---|
-| `reka:feature-builder` | Sonnet | Implements features with RAG context (patterns, ADRs, graph) |
-| `reka:code-reviewer` | Sonnet | Reviews code against project patterns and ADRs |
-| `reka:test-writer` | Sonnet | Generates tests (auto-detects vitest/jest/mocha) |
-| `reka:rag-researcher` | Haiku | Researches codebase via semantic search and graph traversal |
-| `reka:rag-ops` | Haiku | Operations: indexing, collections, memory maintenance |
+Internal subagents used by the workflows — `/reka:code`, `/reka:investigate`, and `/reka:review` delegate to them via the Task tool. For direct requests, prefer the corresponding `/reka:*` command.
+
+| Agent                  | Model  | Used by                                                            |
+| ---------------------- | ------ | ------------------------------------------------------------------ |
+| `reka:feature-builder` | Sonnet | `/reka:code` Phase 3 — multi-file implementations with RAG context |
+| `reka:code-reviewer`   | Sonnet | `/reka:review` — per-file review against patterns and ADRs         |
+| `reka:rag-researcher`  | Haiku  | `/reka:investigate` — parallel semantic search and graph traversal |
+| `reka:rag-ops`         | Haiku  | Operations: indexing, collections, memory maintenance              |
 
 All agents have **persistent memory** (`memory: project`) — they learn your codebase patterns across sessions.
 
@@ -123,12 +122,10 @@ All agents have **persistent memory** (`memory: project`) — they learn your co
 
 ## Hooks
 
-| Event | Action |
-|---|---|
-| **SessionStart** | Auto-starts RAG session, injects `RAG_SESSION_ID` env var |
-| **PreToolUse** (Edit/Write) | Warns if no RAG session is active |
-| **PostToolUse** (Edit/Write) | Runs Prettier + TypeScript type-check (auto-detects `tsconfig.json`) |
-| **Stop** | Ends RAG session, triggers consolidation agent for LTM extraction |
+| Event            | Action                                                            |
+| ---------------- | ----------------------------------------------------------------- |
+| **SessionStart** | Auto-starts RAG session, injects `RAG_SESSION_ID` env var         |
+| **SessionEnd**   | Ends RAG session, triggers consolidation agent for LTM extraction |
 
 ---
 
@@ -148,10 +145,10 @@ Reference skills loaded automatically by commands and agents:
 Claude Code
   │
   └── Reka Plugin
-        ├── 10 Commands (/reka:code, /reka:investigate, ...)
-        ├── 5 Agents (feature-builder, code-reviewer, ...)
+        ├── 9 Commands (/reka:code, /reka:investigate, ...)
+        ├── 4 Agents (feature-builder, code-reviewer, ...)
         ├── 3 Skills (memory-protocol, rag-workflows, obsidian-sync)
-        ├── 4 Hooks (session lifecycle, quality gates)
+        ├── 2 Hooks (session lifecycle)
         │
         └── MCP Server (@getreka/mcp)
               │  35 core tools: search, memory, architecture, sessions, agents
@@ -171,6 +168,7 @@ Claude Code
 - **Embedding service** — BGE-M3 (recommended) or OpenAI
 
 Optional but recommended:
+
 - `typescript-lsp@claude-plugins-official` for TypeScript code intelligence
 - Obsidian for memory visualization (via `/reka:obsidian-sync` skill)
 

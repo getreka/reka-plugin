@@ -31,19 +31,26 @@ start_session(initialContext: "onboarding project: <projectName>")
 
 ### Step 1: Configure Project
 
-Run **`setup_project`** with:
+Run the CLI initializer from the project root:
 
-- `projectPath`: user's project path
-- `projectName`: chosen name
-- `updateClaudeMd`: true
+```bash
+npx @getreka/cli init
+```
 
-This creates/updates: `.mcp.json` and `CLAUDE.md` in the project.
+This creates/updates `.mcp.json` and `CLAUDE.md` in the project (prompts for project name and RAG API URL).
+
+Fallback: if the CLI is unavailable, the **`setup_project`** MCP tool still works — call it with `projectPath`, `projectName`, and `updateClaudeMd: true`.
 
 ### Step 2: Verify Infrastructure
 
 ```bash
 curl -s localhost:3100/health    # RAG API
 curl -s localhost:6333/healthz   # Qdrant
+```
+
+Optional — only if a local BGE-M3 embedding server is part of the setup:
+
+```bash
 curl -s localhost:8080/health    # BGE-M3 embeddings
 ```
 
@@ -65,7 +72,7 @@ Monitor with **`get_index_status`** — may take several minutes for large codeb
 
 1. `find_symbol("<main export>")` — verify symbol index
 2. `search_graph("<core module>")` — verify graph edges
-3. `explain_code("<entry file>")` — verify RAG-enriched explanations
+3. `hybrid_search("<entry file> responsibilities")` + Read the entry file — verify RAG-enriched retrieval
 
 ### Step 6: Report
 
@@ -82,7 +89,7 @@ Monitor with **`get_index_status`** — may take several minutes for large codeb
 
 ### Next Steps
 1. Restart Claude Code to load MCP config
-2. Use /reka:start to begin a session
+2. Use /reka:start to check session status (the SessionStart hook starts sessions automatically)
 3. Try hybrid_search("...") to test search
 ```
 

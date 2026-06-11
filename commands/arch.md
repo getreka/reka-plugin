@@ -22,7 +22,7 @@ start_session(initialContext: "architecture decision: <topic>")
 
 ## Step 1: Understand Current State
 
-Run **`context_briefing(task: "architecture: <topic>", files: [<relevant files>])`** for parallel context gathering. This does get_adrs, get_patterns, get_tech_debt, and search_codebase in one call.
+Run **`context_briefing(task: "architecture: <topic>", files: [<relevant files>])`** for parallel context gathering. This does get_adrs, get_patterns, get_tech_debt, and hybrid_search in one call.
 
 ## Step 2: Get Architectural Guidance
 

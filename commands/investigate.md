@@ -36,7 +36,7 @@ start_session(initialContext: "investigation: <topic>")
 
 | Type                                     | User signals                | Primary tools                                     |
 | ---------------------------------------- | --------------------------- | ------------------------------------------------- |
-| **Find** (where is X?)                   | "where is", "find"          | `find_feature` + `find_symbol` + `hybrid_search`  |
+| **Find** (where is X?)                   | "where is", "find"          | `find_symbol` + `hybrid_search`                   |
 | **Understand** (how does X work?)        | "explain", "how does"       | `hybrid_search` + `search_graph` + `get_patterns` |
 | **Dependencies** (what uses X?)          | "blast radius", "what uses" | `search_graph(expandHops: 2)` + `hybrid_search`   |
 | **Call trace** (who calls X?)            | "call chain", "callers"     | `search_graph` with `calls` edges                 |

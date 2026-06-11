@@ -1,6 +1,6 @@
 ---
 name: rag-workflows
-description: "Search priority and tool-selection guide for RAG-powered development. Read this BEFORE your first RAG search in a session, or whenever you are unsure which tool to use among Grep/Glob, find_symbol, hybrid_search, search_graph, context_briefing, or smart_dispatch. It maps each kind of question (exact string, symbol lookup, conceptual 'how does X work', dependency/blast-radius, pre-edit briefing) to the right tool so you do not default to semantic search for everything."
+description: "Search priority and tool-selection guide for RAG-powered development. Read this BEFORE your first RAG search in a session, or whenever you are unsure which tool to use among Grep/Glob, find_symbol, hybrid_search, search_graph, or context_briefing. It maps each kind of question (exact string, symbol lookup, conceptual 'how does X work', dependency/blast-radius, pre-edit briefing) to the right tool so you do not default to semantic search for everything."
 ---
 
 # RAG Workflow Guide
@@ -9,14 +9,13 @@ description: "Search priority and tool-selection guide for RAG-powered developme
 
 Use the simplest tool that answers the question. Escalate only when needed:
 
-| Priority | Tool                 | Use when                                         | Speed   |
-| -------- | -------------------- | ------------------------------------------------ | ------- |
-| 1        | **Grep/Glob**        | Exact strings, file names, known symbols         | Instant |
-| 2        | **find_symbol**      | Function/class/type lookup by name               | Fast    |
-| 3        | **hybrid_search**    | Semantic/conceptual ("how does X work")          | Medium  |
-| 4        | **search_graph**     | Dependencies, blast radius, N-hop expansion      | Medium  |
-| 5        | **context_briefing** | Before code changes (runs all above in parallel) | Medium  |
-| 6        | **smart_dispatch**   | Complex multi-faceted questions (LLM-routed)     | Slow    |
+| Priority | Tool                 | Use when                                                                             | Speed   |
+| -------- | -------------------- | ------------------------------------------------------------------------------------ | ------- |
+| 1        | **Grep/Glob**        | Exact strings, file names, known symbols                                             | Instant |
+| 2        | **find_symbol**      | Function/class/type lookup by name                                                   | Fast    |
+| 3        | **hybrid_search**    | Semantic/conceptual ("how does X work")                                              | Medium  |
+| 4        | **search_graph**     | Dependencies, blast radius, N-hop expansion                                          | Medium  |
+| 5        | **context_briefing** | Before code changes and complex multi-faceted questions (runs all above in parallel) | Medium  |
 
 ## When to use which
 
@@ -36,16 +35,12 @@ Use the simplest tool that answers the question. Escalate only when needed:
 - "What depends on embedding.ts?" → `search_graph(query: "embedding.ts", edgeTypes: ["imports"])`
 - "Blast radius if I change VectorStore?" → `search_graph(query: "VectorStore", hops: 2)`
 
-### Before code changes (priority 5)
+### Before code changes and complex questions (priority 5)
 
 - Always use `context_briefing(task: "...", files: [...])` before Edit/Write
 - It runs recall + hybrid_search + get_patterns + get_adrs in parallel
 - Returns consolidated project context in one call
-
-### Complex questions (priority 6)
-
-- "Analyze the performance bottleneck in the indexing pipeline" → `smart_dispatch`
-- LLM analyzes the task and selects 2-5 lookups to run in parallel
+- Also the right tool for complex multi-faceted questions ("analyze the performance bottleneck in the indexing pipeline") — follow up with targeted `search_graph` / `find_symbol` calls as needed
 
 ## Memory Type Quick Reference
 
@@ -72,7 +67,7 @@ Use the simplest tool that answers the question. Escalate only when needed:
 ## Key Rules
 
 1. **Always `graphRecall: true`** when using `recall` — enables spreading activation
-2. **Always `context_briefing` before code changes** — the pre-edit hook warns if skipped
+2. **Always `context_briefing` before code changes**
 3. **Smart remember**: `recall` first to check for supersedes before `remember`
 4. **Structured facts**: include `factEntities` and `factDateTs` in metadata
 5. **Session lifecycle**: `start_session` at beginning, `/reka:end` to close
