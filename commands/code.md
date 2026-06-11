@@ -83,8 +83,9 @@ Write code using standard tools (Read, Edit, Write, Bash). Follow:
 ### Delegate large work
 
 For a multi-file change or more than ~100 new lines, delegate the
-implementation to the **feature-builder** agent and the test work to the
-**test-writer** agent (via the Task tool), then synthesize their results. For
+implementation to the **feature-builder** agent (via the Task tool). Delegate
+the accompanying test work either to a general-purpose Task subagent or as part
+of the same feature-builder delegation, then synthesize the results. For
 small, focused changes, implement directly here.
 
 ## Phase 4: Verify
