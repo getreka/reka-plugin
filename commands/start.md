@@ -33,8 +33,7 @@ Initialize a RAG session for the current project and display status.
    ### Project Stats
    - Codebase vectors: {count}
    - Memory (durable): {count}
-   - Memory (episodic): {count}
-   - Memory (semantic): {count}
+   - Memory (semantic LTM): {count}
    - Graph edges: {count}
    ```
 

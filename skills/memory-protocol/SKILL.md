@@ -10,7 +10,7 @@ This is a shared **reference document**, not an invocable skill. It has `disable
 
 ## Why this protocol exists
 
-The project has a human-memory-inspired architecture with 4 phases: sensory buffer, working memory, consolidation agent, and long-term memory (episodic + semantic). Without this protocol, skills use only ~30% of these capabilities — sessions aren't started, memories aren't typed properly, quarantine fills up and gets deleted, structured facts aren't populated, and memory relationships degrade into flat duplicates.
+The project has a human-memory-inspired architecture with 4 phases: sensory buffer, working memory, consolidation agent, and long-term memory. Without this protocol, skills use only ~30% of these capabilities — sessions aren't started, memories aren't typed properly, quarantine fills up and gets deleted, structured facts aren't populated, and memory relationships degrade into flat duplicates.
 
 Following this protocol means the full architecture works as designed.
 
@@ -162,7 +162,7 @@ The only exception is quick lookups where speed matters more than depth.
 
 For any skill that needs project context before acting, `context_briefing` is the single best tool. It runs in parallel:
 
-- recall (durable + episodic + semantic LTM)
+- recall (durable + semantic LTM)
 - hybrid_search (keyword + semantic)
 - get_patterns
 - get_adrs

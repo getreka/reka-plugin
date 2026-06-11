@@ -10,7 +10,7 @@ Save knowledge from the current session so future sessions have full context.
 
 This skill follows the RAG Memory Protocol (see `memory-protocol` skill). As the session-closing skill, it has special responsibilities:
 
-- Trigger consolidation via `end_session` (creates episodic + semantic LTM)
+- Trigger consolidation via `end_session` (distills session knowledge into long-term memory)
 - Review quarantine queue before closing
 - Use structured facts in remember calls
 - Smart remember: recall before save to detect supersedes
