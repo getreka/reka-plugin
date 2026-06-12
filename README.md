@@ -182,6 +182,12 @@ claude --plugin-dir ./reka-plugin
 
 Use `/reload-plugins` after making changes to pick up updates without restarting.
 
+Test the SessionStart hook (plain bash, mocks curl via a PATH shim):
+
+```bash
+bash tests/session-start.test.sh
+```
+
 ---
 
 ## License
