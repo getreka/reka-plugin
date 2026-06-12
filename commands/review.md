@@ -76,6 +76,10 @@ For each finding:
 
 ### Step 5: Save review results
 
+Save ONE memory per review, and only if it surfaced non-obvious findings —
+include the why behind the key issues. Skip clean reviews with nothing worth
+keeping: those memories pollute recall.
+
 ```
 remember(
   content: "Code review: {description}. {N} critical, {M} warnings, {K} suggestions. Key issues: {summary}",
