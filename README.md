@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Claude_Code-Plugin-7C3AED?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0wIDE4Yy00LjQyIDAtOC0zLjU4LTgtOHMzLjU4LTggOC04IDggMy41OCA4IDgtMy41OCA4LTggNHoiLz48L3N2Zz4=" alt="Claude Code Plugin"/>
-  <img src="https://img.shields.io/badge/version-0.3.0-blue?style=for-the-badge" alt="Version"/>
+  <img src="https://img.shields.io/badge/version-0.4.0-blue?style=for-the-badge" alt="Version"/>
   <img src="https://img.shields.io/badge/license-BSL--1.1-green?style=for-the-badge" alt="License"/>
 </p>
 
@@ -125,7 +125,9 @@ All agents have **persistent memory** (`memory: project`) — they learn your co
 | Event            | Action                                                                                             |
 | ---------------- | -------------------------------------------------------------------------------------------------- |
 | **SessionStart** | Auto-starts RAG session, injects `RAG_SESSION_ID` env var, injects the session digest into context |
-| **SessionEnd**   | Ends RAG session, triggers consolidation agent for LTM extraction                                  |
+| **SessionEnd**   | Ships the session transcript to your RAG API, ends the RAG session, triggers consolidation agent   |
+
+Transcript capture sends the last 2 MiB of the Claude Code transcript to `POST /api/capture/transcript` on the RAG API URL you configured — your own server is the only destination; the plugin sends data nowhere else. Set `REKA_TRANSCRIPT_CAPTURE=0` to disable it.
 
 ---
 
@@ -151,21 +153,21 @@ Claude Code
         ├── 2 Hooks (session lifecycle)
         │
         └── MCP Server (@getreka/mcp)
-              │  35 core tools: search, memory, architecture, sessions, agents
+              │  29 tools: search, memory, architecture, sessions, agents
               │
               └── RAG API
                     ├── Qdrant — vector database
-                    ├── BGE-M3 / OpenAI — embeddings (1024d / 1536d)
-                    └── Ollama / Claude — LLM (hybrid routing)
+                    ├── Ollama — embeddings (qwen3-embedding) + local LLM
+                    └── Claude — complex tasks (optional, hybrid routing)
 ```
 
 ---
 
 ## Prerequisites
 
-- **RAG API** server running ([shared-ai-infra](https://github.com/getreka/shared-ai-infra))
+- **RAG API** server running ([getreka/reka](https://github.com/getreka/reka))
 - **Qdrant** vector database
-- **Embedding service** — BGE-M3 (recommended) or OpenAI
+- **Ollama** — embeddings + local LLM (default provider)
 
 Optional but recommended:
 
@@ -182,10 +184,11 @@ claude --plugin-dir ./reka-plugin
 
 Use `/reload-plugins` after making changes to pick up updates without restarting.
 
-Test the SessionStart hook (plain bash, mocks curl via a PATH shim):
+Test the hooks (plain bash, mocks curl via a PATH shim):
 
 ```bash
 bash tests/session-start.test.sh
+bash tests/session-end.test.sh
 ```
 
 ---
