@@ -1,7 +1,7 @@
 ---
 name: rag-ops
 description: "RAG operations specialist — manages indexing, collections, memory, and system health. Call this agent when the user asks for an operational task: reindexing, checking index/collection stats, triaging or maintaining memory, snapshots, or infrastructure diagnostics/health checks. Do NOT call it for writing or reviewing application code."
-tools: Read, Bash, Grep, mcp__plugin_reka_rag__index_codebase, mcp__plugin_reka_rag__list_memories, mcp__plugin_reka_rag__review_memories, mcp__plugin_reka_rag__run_agent
+tools: Read, Bash, Grep, mcp__plugin_reka_rag__index_codebase, mcp__plugin_reka_rag__list_memories, mcp__plugin_reka_rag__review_memories, mcp__plugin_reka_rag__run_agent, mcp__plugin_reka_rag__memory
 model: haiku
 memory: project
 ---

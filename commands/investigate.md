@@ -90,7 +90,11 @@ Structure based on investigation type (Find/Understand/Dependencies/Debug). Incl
 - Proposed fix
 - Risks and side effects
 
-## Step 6: Save to memory (NEVER skip)
+## Step 6: Save to memory (once per investigation)
+
+Save ONE memory per investigation — the findings are exactly the non-obvious
+knowledge `remember` exists for. Include the WHY (root cause, evidence), not
+just the what.
 
 ### Smart remember: check for existing investigations first
 

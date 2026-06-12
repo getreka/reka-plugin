@@ -99,9 +99,10 @@ For review-only tasks: read the code, compare against patterns and ADRs, present
 
 ## Phase 5: Remember
 
-After a session with meaningful code edits, save what the consolidation agent
-can't infer automatically (key decisions, non-obvious gotchas). Skip this for
-trivial edits that produced no durable knowledge.
+Call `remember` once per work item, and only when you learned something
+non-obvious — a decision, a gotcha, or a new procedure — and include the WHY,
+not just the what. Do NOT save memories for mechanical changes or restate what
+the code already says: they pollute recall.
 
 ### Check for existing memories first (smart remember)
 
