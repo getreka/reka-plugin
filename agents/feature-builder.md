@@ -1,7 +1,7 @@
 ---
 name: feature-builder
 description: Delegation target for /reka:code Phase 3 — implements features with RAG architectural context (loads patterns, ADRs, and related code before writing). Invoke via Task for multi-file implementations or changes over ~100 new lines; for direct user requests prefer the /reka:code workflow, which delegates here when appropriate. Do NOT use it for one-line tweaks or pure research/review tasks.
-tools: Read, Write, Edit, Grep, Glob, Bash, mcp__plugin_reka_rag__context_briefing, mcp__plugin_reka_rag__remember, mcp__plugin_reka_rag__record_adr, mcp__plugin_reka_rag__record_pattern
+tools: Read, Write, Edit, Grep, Glob, Bash, mcp__plugin_reka_rag__context_briefing, mcp__plugin_reka_rag__remember, mcp__plugin_reka_rag__record_adr, mcp__plugin_reka_rag__record_pattern, mcp__plugin_reka_rag__memory
 model: sonnet
 memory: project
 ---
