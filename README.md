@@ -153,21 +153,21 @@ Claude Code
         ├── 2 Hooks (session lifecycle)
         │
         └── MCP Server (@getreka/mcp)
-              │  35 core tools: search, memory, architecture, sessions, agents
+              │  29 tools: search, memory, architecture, sessions, agents
               │
               └── RAG API
                     ├── Qdrant — vector database
-                    ├── BGE-M3 / OpenAI — embeddings (1024d / 1536d)
-                    └── Ollama / Claude — LLM (hybrid routing)
+                    ├── Ollama — embeddings (qwen3-embedding) + local LLM
+                    └── Claude — complex tasks (optional, hybrid routing)
 ```
 
 ---
 
 ## Prerequisites
 
-- **RAG API** server running ([shared-ai-infra](https://github.com/getreka/shared-ai-infra))
+- **RAG API** server running ([getreka/reka](https://github.com/getreka/reka))
 - **Qdrant** vector database
-- **Embedding service** — BGE-M3 (recommended) or OpenAI
+- **Ollama** — embeddings + local LLM (default provider)
 
 Optional but recommended:
 
