@@ -122,10 +122,10 @@ All agents have **persistent memory** (`memory: project`) — they learn your co
 
 ## Hooks
 
-| Event            | Action                                                            |
-| ---------------- | ----------------------------------------------------------------- |
-| **SessionStart** | Auto-starts RAG session, injects `RAG_SESSION_ID` env var         |
-| **SessionEnd**   | Ends RAG session, triggers consolidation agent for LTM extraction |
+| Event            | Action                                                                                             |
+| ---------------- | -------------------------------------------------------------------------------------------------- |
+| **SessionStart** | Auto-starts RAG session, injects `RAG_SESSION_ID` env var, injects the session digest into context |
+| **SessionEnd**   | Ends RAG session, triggers consolidation agent for LTM extraction                                  |
 
 ---
 
