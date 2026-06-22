@@ -39,7 +39,13 @@ npx @getreka/cli init
 
 This creates/updates `.mcp.json` and `CLAUDE.md` in the project (prompts for project name and RAG API URL).
 
-Fallback: if the CLI is unavailable, the **`setup_project`** MCP tool still works — call it with `projectPath`, `projectName`, and `updateClaudeMd: true`.
+The written `.mcp.json` carries a **project-scoped API key** (`rk_{project}_…`) in `env.REKA_API_KEY` and is added to `.gitignore` (never commit it). It does **not** set `PROJECT_NAME` — the namespace is resolved from the key via `/api/whoami`, so the key is the single source of truth.
+
+**Multiple projects on one machine:** run `init` once per project. Each project's `.mcp.json` carries its own key and resolves its own namespace independently — no shared `PROJECT_NAME`, no cross-project leakage. (A wrong/forged name fails closed with a 403; it can never read another project.)
+
+After `init`, **approve the project-scoped `rag` MCP server** when Claude Code prompts (or set `enableAllProjectMcpServers`), then **restart Claude Code** so the server loads.
+
+Fallback: if the CLI is unavailable, the **`setup_project`** MCP tool still works — call it with `projectPath`, `projectName`, and `updateClaudeMd: true` (same behavior: project-scoped key, no `PROJECT_NAME`, `.mcp.json` gitignored).
 
 ### Step 2: Verify Infrastructure
 
