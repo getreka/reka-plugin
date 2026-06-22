@@ -50,8 +50,13 @@ On first enable, Claude Code prompts for three settings:
 | Setting          | Description                                | Example                 |
 | ---------------- | ------------------------------------------ | ----------------------- |
 | **RAG API URL**  | Your RAG API server                        | `http://localhost:3100` |
-| **RAG API Key**  | Authentication key (stored in OS keychain) | `e699194c-...`          |
-| **Project Name** | Collection namespace                       | `myapp`                 |
+| **RAG API Key**  | Project-scoped key (`rk_{project}_…`)       | `rk_myapp_…`            |
+| **Project Name** | Used to mint the key; the namespace is resolved from the key | `myapp`   |
+
+> **Multiple projects on one machine?** The single bundled config above is for one
+> project. For several repos, run `npx @getreka/cli init` (or `/reka:onboard`) **once
+> per project** — each writes its own gitignored `.mcp.json` with its own
+> `rk_{project}_…` key and resolves its own namespace from that key, independently.
 
 ### Team auto-install
 
