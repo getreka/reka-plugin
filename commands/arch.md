@@ -40,20 +40,6 @@ Based on the decision type:
 
 - `recall("technology decision", graphRecall: true)` + `search_docs(query)`
 
-### Tribunal Mode (for complex decisions with 2+ options)
-
-For rigorous multi-position analysis, use:
-
-```
-mcp__plugin_reka_rag__tribunal_debate(
-  topic: "<the question>",
-  positions: ["Option A", "Option B"],
-  context: "<constraints>",
-  useCodeContext: true,
-  autoRecord: true
-)
-```
-
 ## Step 3: Present Analysis
 
 ```

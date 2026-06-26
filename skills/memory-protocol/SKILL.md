@@ -184,13 +184,13 @@ Auto-generated memories (from conversation-analyzer, fact-extractor, session con
 
 - Your explicit `remember()` calls go directly to **durable** — they bypass quarantine
 - The consolidation agent's auto-extracted memories go to **quarantine** — they need promotion
-- If the user asks about memory quality or wants to review: suggest `/reka:memory-review`
+- If the user asks about memory quality or wants to triage quarantine: use `review_memories` + `promote_memory`
 - The `/reka:end` command reviews quarantine at session end
 
 ### Don't worry about:
 
 - Manually promoting memories from within coding/investigation skills
-- That's `/reka:end` and `/reka:memory-review`'s job
+- That's `/reka:end`'s job (plus `review_memories`/`promote_memory` on demand)
 - Just make sure YOUR findings are saved via `remember()` (durable path)
 
 ---
