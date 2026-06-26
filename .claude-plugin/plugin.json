@@ -1,6 +1,6 @@
 {
   "name": "reka",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "RAG-powered AI development: semantic search, project memory, architecture decisions, and coding workflows",
   "author": {
     "name": "Reka",
