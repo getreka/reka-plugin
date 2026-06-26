@@ -26,15 +26,9 @@
     },
     "rag_api_key": {
       "title": "RAG API Key",
-      "description": "API key for RAG API authentication",
+      "description": "API key for RAG API authentication. The project namespace is derived from the key (ADR-005) — no separate project name is needed.",
       "type": "string",
       "sensitive": true
-    },
-    "project_name": {
-      "title": "Project Name",
-      "description": "Project identifier for collection namespacing (e.g. 'myapp')",
-      "type": "string",
-      "sensitive": false
     }
   }
 }

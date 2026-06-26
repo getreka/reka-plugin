@@ -4,10 +4,9 @@
       "command": "npx",
       "args": ["-y", "@getreka/mcp@latest"],
       "env": {
-        "PROJECT_NAME": "${user_config.project_name}",
         "PROJECT_PATH": "${CLAUDE_PROJECT_DIR}",
         "RAG_API_URL": "${user_config.rag_api_url}",
-        "RAG_API_KEY": "${user_config.rag_api_key}"
+        "REKA_API_KEY": "${user_config.rag_api_key}"
       }
     }
   }

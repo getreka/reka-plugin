@@ -5,8 +5,10 @@
 #   (ii)  NOT shipped when REKA_TRANSCRIPT_CAPTURE=0
 #   (iii) NOT shipped when transcript_path is missing or nonexistent
 #   (iv)  capture still runs when the .ended marker exists (end call skipped)
-#   (v)   end-session call unchanged when RAG_SESSION_ID set and no marker
+#   (v)   end-session call when RAG_SESSION_ID set and no marker; the tenant
+#         rides the X-Project-Name header, NOT a client projectName in the body
 #   (vi)  hook always exits 0 even when curl fails
+#   (vii) durable key re-resolution from .mcp.json when the env key was dropped
 #
 # Run: bash tests/session-end.test.sh
 
@@ -153,6 +155,11 @@ case "$END_LINE" in
     ok "(v) end-session POST with json + auth + autoSaveLearnings" ;;
   *) fail "(v) end-session POST with json + auth + autoSaveLearnings (got: $END_LINE)" ;;
 esac
+if printf '%s' "$END_LINE" | grep -q '"projectName"'; then
+  fail "(v) end body must NOT carry a client projectName (enforceProjectScope)"
+else
+  ok "(v) end body carries no client projectName (tenant rides the header)"
+fi
 if [ -f "$STATE_DIR/session-rag-sess-2.ended" ]; then
   ok "(v) .ended marker written after the end call"
 else
@@ -166,6 +173,31 @@ run_hook curl_fail "$(stdin_json "$TRANSCRIPT")" \
   RAG_SESSION_ID="rag-sess-3" RAG_STATE_DIR="$STATE_DIR"
 [ "$RC" -eq 0 ] && [ -z "$OUT" ] && ok "(vi) curl failure: exit 0, no output" \
   || fail "(vi) curl failure: exit 0, no output (rc=$RC out=$OUT)"
+
+# ── (vii) durable .mcp.json key resolution when the env key was dropped ──────
+# A restart can drop the session-start-injected RAG_API_KEY (CC #62442); the
+# hook must re-resolve from the project's own .mcp.json and still end with the
+# right tenant (Bearer + key-derived X-Project-Name).
+MCPDIR="$TMP/mcpproj"; mkdir -p "$MCPDIR"
+cat > "$MCPDIR/.mcp.json" <<'JSON'
+{ "mcpServers": { "rag": { "command": "npx", "args": ["-y","@getreka/mcp@latest"],
+  "env": { "RAG_API_URL": "http://mock:3100", "REKA_API_KEY": "rk_mcpproj_beef11" } } } }
+JSON
+MOCK_LOG="$TMP/log-vii"; : > "$MOCK_LOG"; MOCK_BODY="$TMP/body-vii"
+STATE_DIR="$TMP/state-vii"
+OUT=$(printf '%s' "$(stdin_json "$TRANSCRIPT")" | env PATH="$TMP/bin:$PATH" \
+  MOCK_MODE=ok MOCK_LOG="$MOCK_LOG" MOCK_BODY="$MOCK_BODY" \
+  CLAUDE_PROJECT_DIR="$MCPDIR" \
+  RAG_API_URL="" RAG_API_KEY="" RAG_PROJECT_NAME="" \
+  RAG_SESSION_ID="rag-sess-7" RAG_STATE_DIR="$STATE_DIR" \
+  bash "$HOOK" 2>/dev/null); RC=$?
+[ "$RC" -eq 0 ] && ok "(vii) durable fallback: exit 0" || fail "(vii) durable fallback: exit 0 (got $RC)"
+END_LINE7="$(grep "api/session/rag-sess-7/end" "$MOCK_LOG" | head -1)"
+case "$END_LINE7" in
+  *"Bearer rk_mcpproj_beef11"*"X-Project-Name: mcpproj"*)
+    ok "(vii) end re-resolves key+project from .mcp.json" ;;
+  *) fail "(vii) end re-resolves key+project from .mcp.json (got: $END_LINE7)" ;;
+esac
 
 echo
 echo "$PASS passed, $FAIL failed"
