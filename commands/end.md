@@ -71,7 +71,7 @@ review_memories
 If quarantine has items:
 
 - Promote clearly valuable ones: `promote_memory(memoryId, reason: "human_validated")`
-- Skip uncertain ones — they live 7 days, user can review with `/reka:memory-review`
+- Skip uncertain ones — they live 7 days; governance maintenance expires them
 
 ### Step 4: Close session
 

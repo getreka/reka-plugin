@@ -95,7 +95,7 @@ Monitor with **`get_index_status`** — may take several minutes for large codeb
 
 ### Next Steps
 1. Restart Claude Code to load MCP config
-2. Use /reka:start to check session status (the SessionStart hook starts sessions automatically)
+2. The SessionStart hook starts a RAG session automatically — nothing to run
 3. Try hybrid_search("...") to test search
 ```
 

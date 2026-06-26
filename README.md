@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Claude_Code-Plugin-7C3AED?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0wIDE4Yy00LjQyIDAtOC0zLjU4LTgtOHMzLjU4LTggOC04IDggMy41OCA4IDgtMy41OCA4LTggNHoiLz48L3N2Zz4=" alt="Claude Code Plugin"/>
-  <img src="https://img.shields.io/badge/version-0.5.0-blue?style=for-the-badge" alt="Version"/>
+  <img src="https://img.shields.io/badge/version-0.6.0-blue?style=for-the-badge" alt="Version"/>
   <img src="https://img.shields.io/badge/license-BSL--1.1-green?style=for-the-badge" alt="License"/>
 </p>
 
@@ -21,10 +21,10 @@ Reka is a [Claude Code plugin](https://code.claude.com/docs/en/plugins) that con
 
 | Capability                 | How it works                                                                                |
 | -------------------------- | ------------------------------------------------------------------------------------------- |
-| **Semantic search**        | Search code, docs, and Confluence by meaning, not just keywords                             |
+| **Semantic search**        | Search code and docs by meaning, not just keywords                                          |
 | **Project memory**         | Decisions, patterns, and insights persist across sessions via Ebbinghaus-inspired retention |
 | **Architecture awareness** | ADRs, dependency graphs, blast radius analysis before every change                          |
-| **Structured workflows**   | 5-phase coding, deep investigation, tribunal debates, and more                              |
+| **Structured workflows**   | 5-phase coding, deep investigation, architecture review, and more                           |
 | **Auto session lifecycle** | Hooks start/end RAG sessions automatically, trigger memory consolidation                    |
 
 ---
@@ -92,15 +92,12 @@ Add to your project's `.claude/settings.json` so everyone gets it automatically:
 | Command        | Description                                                       |
 | -------------- | ----------------------------------------------------------------- |
 | `/reka:arch`   | Record and analyze architecture decisions (ADRs)                  |
-| `/reka:debate` | Adversarial tribunal debate for complex decisions (2-4 positions) |
 
 ### Session & Memory
 
 | Command               | Description                                                             |
 | --------------------- | ----------------------------------------------------------------------- |
-| `/reka:start`         | Display session status and project stats (sessions auto-start via hook) |
 | `/reka:end`           | Save knowledge, close session, trigger memory consolidation             |
-| `/reka:memory-review` | Triage quarantine queue, promote/reject auto-extracted memories         |
 
 ### Setup
 
@@ -119,7 +116,6 @@ Internal subagents used by the workflows — `/reka:code`, `/reka:investigate`, 
 | `reka:feature-builder` | Sonnet | `/reka:code` Phase 3 — multi-file implementations with RAG context |
 | `reka:code-reviewer`   | Sonnet | `/reka:review` — per-file review against patterns and ADRs         |
 | `reka:rag-researcher`  | Haiku  | `/reka:investigate` — parallel semantic search and graph traversal |
-| `reka:rag-ops`         | Haiku  | Operations: indexing, collections, memory maintenance              |
 
 All agents have **persistent memory** (`memory: project`) — they learn your codebase patterns across sessions.
 
@@ -138,11 +134,10 @@ Transcript capture sends the last 2 MiB of the Claude Code transcript to `POST /
 
 ## Skills
 
-Reference skills loaded automatically by commands and agents:
+Skills — `rag-workflows` auto-invokes on development tasks; `memory-protocol` is a write-side reference the `/reka:*` commands read by path:
 
-- **memory-protocol** — Session lifecycle, smart remember with relationship detection, memory type selection, structured facts
 - **rag-workflows** — Search tool priority guide (Grep → find_symbol → hybrid_search → search_graph → context_briefing)
-- **obsidian-sync** — Bidirectional sync between RAG memories and Obsidian vault
+- **memory-protocol** — Session lifecycle, smart remember with relationship detection, memory type selection, structured facts
 
 ---
 
@@ -152,13 +147,13 @@ Reference skills loaded automatically by commands and agents:
 Claude Code
   │
   └── Reka Plugin
-        ├── 9 Commands (/reka:code, /reka:investigate, ...)
-        ├── 4 Agents (feature-builder, code-reviewer, ...)
-        ├── 3 Skills (memory-protocol, rag-workflows, obsidian-sync)
+        ├── 6 Commands (/reka:code, /reka:investigate, ...)
+        ├── 3 Agents (feature-builder, rag-researcher, code-reviewer)
+        ├── 2 Skills (memory-protocol, rag-workflows)
         ├── 3 Hooks (session lifecycle + prompt auto-recall)
         │
         └── MCP Server (@getreka/mcp)
-              │  29 tools: search, memory, architecture, sessions, agents
+              │  28 tools: search, memory, architecture, sessions, agents
               │
               └── RAG API
                     ├── Qdrant — vector database
@@ -177,7 +172,6 @@ Claude Code
 Optional but recommended:
 
 - `typescript-lsp@claude-plugins-official` for TypeScript code intelligence
-- Obsidian for memory visualization (via `/reka:obsidian-sync` skill)
 
 ---
 

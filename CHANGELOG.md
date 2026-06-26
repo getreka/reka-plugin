@@ -3,6 +3,30 @@
 All notable changes to the reka plugin are documented here. This project adheres
 to [Semantic Versioning](https://semver.org/).
 
+## 0.6.0 — 2026-06-26
+
+### Removed (Subtraction sweep)
+
+- **`/reka:debate`** and the **`tribunal_debate`** capability — 0 invocations
+  across 37+ audited sessions. Deleted in full across the stack (plugin command,
+  `arch.md` Tribunal Mode, the `@getreka/mcp` tool, and the rag-api/dashboard
+  tribunal stack). Requires `@getreka/mcp` ≥ 0.7.0.
+- **`/reka:memory-review`** — 0 invocations; quarantine triage lives in
+  `/reka:end` plus the `review_memories`/`promote_memory` tools, and governance
+  maintenance runs server-side.
+- **`/reka:start`** — a status display superseded by the SessionStart hook.
+- **`rag-ops`** agent — orphaned from the command spine (its tools remain on the
+  MCP surface).
+- **`obsidian-sync`** skill — broad triggers, depended on an `mcp__obsidian__*`
+  server most projects lack.
+
+### Changed
+
+- Docs truth pass (Proof rule): dropped the Confluence-search claim and the
+  phantom `/reka:obsidian-sync` reference; corrected the skill description
+  (`rag-workflows` auto-invokes, `memory-protocol` is read by path); updated the
+  architecture diagram to 6 commands / 3 agents / 2 skills / **28 tools**.
+
 ## 0.5.0 — 2026-06-26
 
 ### Fixed
