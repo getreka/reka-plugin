@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Claude_Code-Plugin-7C3AED?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0wIDE4Yy00LjQyIDAtOC0zLjU4LTgtOHMzLjU4LTggOC04IDggMy41OCA4IDgtMy41OCA4LTggNHoiLz48L3N2Zz4=" alt="Claude Code Plugin"/>
-  <img src="https://img.shields.io/badge/version-0.4.0-blue?style=for-the-badge" alt="Version"/>
+  <img src="https://img.shields.io/badge/version-0.5.0-blue?style=for-the-badge" alt="Version"/>
   <img src="https://img.shields.io/badge/license-BSL--1.1-green?style=for-the-badge" alt="License"/>
 </p>
 
@@ -155,7 +155,7 @@ Claude Code
         ├── 9 Commands (/reka:code, /reka:investigate, ...)
         ├── 4 Agents (feature-builder, code-reviewer, ...)
         ├── 3 Skills (memory-protocol, rag-workflows, obsidian-sync)
-        ├── 2 Hooks (session lifecycle)
+        ├── 3 Hooks (session lifecycle + prompt auto-recall)
         │
         └── MCP Server (@getreka/mcp)
               │  29 tools: search, memory, architecture, sessions, agents
