@@ -27,11 +27,22 @@ case "$PROMPT" in /*) exit 0 ;; esac
 HOOK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=lib/rag-env.sh
 . "$HOOK_DIR/lib/rag-env.sh" 2>/dev/null && reka_resolve || true
+# Stay fail-open even if sourcing failed and reka_log is undefined.
+type reka_log >/dev/null 2>&1 || reka_log() { :; }
 
 API_URL="${RAG_API_URL:-http://localhost:3100}"
 API_KEY="${RAG_API_KEY:-}"
 PROJECT="${RAG_PROJECT_NAME:-${REKA_PROJECT:-default}}"
 SESSION_ID="${RAG_SESSION_ID:-}"
+
+# Empty key against a keyed remote server is a guaranteed silent 401 (the
+# historical 0-firings cause). Anonymous is only a real path on localhost dev.
+if [ -z "$API_KEY" ]; then
+  case "$API_URL" in
+    http://localhost*|http://127.0.0.1*) : ;;
+    *) reka_log "prompt-recall SKIP: no API key resolved (url=$API_URL project=$PROJECT cwd=$PWD)"; exit 0 ;;
+  esac
+fi
 
 # Throttle: at most one auto-recall per REKA_RECALL_THROTTLE_SEC per session.
 THROTTLE="${REKA_RECALL_THROTTLE_SEC:-45}"
@@ -56,12 +67,18 @@ BODY="$(jq -nc --arg q "$PROMPT" --argjson lim 3 --arg s "$SESSION_ID" \
   2>/dev/null || true)"
 [ -n "$BODY" ] || exit 0
 
-RESP="$(curl -fsS -m 3 -X POST "$API_URL/api/memory/recall" \
+# -m 8: graph recall over a remote HTTPS server routinely exceeds the old -m 3
+# (session-start uses -m 5 for a cheaper call). Stays inside the hook's 10s cap.
+CURL_ERR=""
+RESP="$(curl -fsS -m 8 -X POST "$API_URL/api/memory/recall" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $API_KEY" \
   -H "X-Project-Name: $PROJECT" \
-  -d "$BODY" 2>/dev/null || true)"
-[ -n "$RESP" ] || exit 0
+  -d "$BODY" 2>&1)" || CURL_ERR="rc=$?"
+if [ -n "$CURL_ERR" ] || [ -z "$RESP" ]; then
+  reka_log "prompt-recall FAIL: $CURL_ERR url=$API_URL project=$PROJECT resp=$(printf '%s' "$RESP" | head -c 160)"
+  exit 0
+fi
 
 # A successful call counts against the throttle even if it returned no hits —
 # otherwise a memory-less project (a common early state) re-curls every prompt.
@@ -75,7 +92,10 @@ BLOCK="$(printf '%s' "$RESP" | jq -r '
 ' 2>/dev/null || true)"
 
 if [ -n "$BLOCK" ]; then
+  reka_log "prompt-recall OK: injected block (project=$PROJECT session=${SESSION_ID:-none})"
   printf '%s\n' "$BLOCK"
+else
+  reka_log "prompt-recall OK: no hits (project=$PROJECT)"
 fi
 
 exit 0

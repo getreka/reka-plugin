@@ -21,9 +21,32 @@
 
 _reka_is_template() { case "${1:-}" in *'${'*) return 0 ;; *) return 1 ;; esac; }
 
+# Fail-loud breadcrumbs: hooks log one line per decision so silent failures
+# (the 0-firings class — empty key, 401, timeout) are diagnosable after the
+# fact. Capped log at $STATE/reka/hook.log. Opt out: REKA_HOOK_LOG=0.
+reka_log() {
+  [ "${REKA_HOOK_LOG:-1}" = "0" ] && return 0
+  local d="${RAG_STATE_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/reka}"
+  mkdir -p "$d" 2>/dev/null || return 0
+  local f="$d/hook.log"
+  if [ -f "$f" ] && [ "$(wc -c < "$f" 2>/dev/null || echo 0)" -gt 524288 ]; then
+    : > "$f" 2>/dev/null || true
+  fi
+  printf '%s %s\n' "$(date -Is 2>/dev/null || date)" "$*" >> "$f" 2>/dev/null || true
+  return 0
+}
+
+# Nearest .mcp.json: the session's project dir, then parent directories (sessions
+# often start in a sub-repo of a multi-repo workspace — e.g. beep-wl/Beep-*-* —
+# while the keyed .mcp.json lives at the workspace root). Stops at $HOME or /.
 _reka_mcp_path() {
-  local p="${CLAUDE_PROJECT_DIR:-$PWD}/.mcp.json"
-  [ -r "$p" ] && printf '%s' "$p"
+  local d="${CLAUDE_PROJECT_DIR:-$PWD}" i=0
+  while [ -n "$d" ] && [ "$d" != "/" ] && [ "$i" -lt 6 ]; do
+    if [ -r "$d/.mcp.json" ]; then printf '%s' "$d/.mcp.json"; return 0; fi
+    [ "$d" = "$HOME" ] && break
+    d="$(dirname "$d")"
+    i=$((i + 1))
+  done
   return 0
 }
 
