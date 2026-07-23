@@ -3,6 +3,26 @@
 All notable changes to the reka plugin are documented here. This project adheres
 to [Semantic Versioning](https://semver.org/).
 
+## 0.6.1 — 2026-07-23
+
+### Fixed (auto-recall reliability — ADR-006 phase 0)
+
+- **`rag-env.sh` resolves `.mcp.json` by walking parent directories** (up to 6
+  levels, stopping at `$HOME`): sessions started in a sub-repo of a multi-repo
+  workspace (e.g. `beep-wl/Beep-SaaS-AppEngine`) previously resolved an empty
+  key and silently 401'd against the keyed server.
+- **`prompt-recall.sh` guards the empty-key + remote-server case** instead of
+  curling into a guaranteed silent 401 (anonymous stays allowed on localhost).
+- **Recall timeout raised `-m 3` → `-m 8`** — graph recall over remote HTTPS
+  routinely exceeded 3s; stays inside the hook's 10s budget.
+- **Fail-loud breadcrumbs**: `reka_log` writes one line per hook decision to
+  `$XDG_STATE_HOME/reka/hook.log` (capped, opt out `REKA_HOOK_LOG=0`). The
+  0-firings class of failures survived two prior releases because every path
+  exited silently.
+- Documented operational cause found during rollout: the hook hard-requires
+  `jq`; on a machine without it, auto-recall can never fire. Verified live
+  firing end-to-end after the fixes (first observed injection of this hook).
+
 ## 0.6.0 — 2026-06-26
 
 ### Removed (Subtraction sweep)
