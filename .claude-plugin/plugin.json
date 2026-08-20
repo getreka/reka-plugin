@@ -1,6 +1,6 @@
 {
   "name": "reka",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "RAG-powered AI development: semantic search, project memory, architecture decisions, and coding workflows",
   "author": {
     "name": "Reka",
@@ -26,7 +26,7 @@
     },
     "rag_api_key": {
       "title": "RAG API Key",
-      "description": "API key for RAG API authentication. The project namespace is derived from the key (ADR-005) — no separate project name is needed.",
+      "description": "API key for RAG API authentication. The project namespace is derived from the key (ADR-005) \u2014 no separate project name is needed.",
       "type": "string",
       "sensitive": true
     }

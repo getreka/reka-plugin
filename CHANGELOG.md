@@ -3,6 +3,23 @@
 All notable changes to the reka plugin are documented here. This project adheres
 to [Semantic Versioning](https://semver.org/).
 
+## 0.7.0 — 2026-08-20
+
+Trial-audit follow-ups (RC1/RC2/RC4) + ADR-006 Phase 1 step 2 (memory-file sync).
+
+### Fixed
+- **Cross-project namespace bleed (RC1):** `rag-env.sh` now resolves the project's own `.mcp.json` key+URL as a PAIR **before** the user-scope plugin option (`CLAUDE_PLUGIN_OPTION_RAG_API_KEY` is identical in every project — it routed all hook traffic of every project into one namespace for 4 weeks). userConfig remains the single-project fallback.
+- **Session linkage (RC2):** Claude Code sources `CLAUDE_ENV_FILE` only into Bash-tool commands, never into later hooks — `RAG_SESSION_ID` never reached prompt-recall/session-end (117/117 runs `session=none`; `/api/session/:id/end` was called 0 times in the trial window). session-start now records a `<cc-session-id> -> <rag-session-id, project, url>` map under the state dir; prompt-recall sends the mapped `sessionId` (retrieval audit works), session-end POSTs `/end` and clears the map; resume/compact/fork REUSE the mapped session instead of opening a second one.
+- **Synthetic prompts (RC4):** prompt-recall skips `<task-notification>`, bash-mode echoes, local-command output and interrupt notices (they caused 16 HTTP-400s and 10 junk injections), and truncates the query to `REKA_RECALL_MAX_QUERY` (default 1500).
+- Per-session recall throttle (stamp keyed by RAG/CC session id — never a machine-global `nosess`).
+- session-start/session-end now log to `~/.local/state/reka/hook.log` (lifecycle was previously unobservable).
+
+### Added
+- **Memory-file sync (ADR-006 Phase 1 step 2, opt-in):** with `REKA_MEMORY_SYNC=1`, SessionEnd hash-reconciles the session's Claude Code memory files (`<transcript dir>/memory/*.md`) against `GET /api/memory-files` and POSTs changed files to `/api/memory-files/sync` — client-side redaction first (`lib/redact.sed`: keys, tokens, passwords, connection strings, UA phones), freshest-first, `REKA_MEMORY_SYNC_MAX_FILES` (10) and a `REKA_MEMORY_SYNC_BUDGET_SEC` (30s) wall-clock cap. Default **OFF** per ADR-006 (client-data privacy).
+- **Relevance floor:** auto-recall sends `minScore` (default 0.65, `REKA_RECALL_MIN_SCORE`) — the server abstains instead of injecting the closest junk (trial: 3 attractor memories filled 38% of injected slots; ≤10% of injections were relevant).
+- SessionEnd hook timeout 25s → 90s; /end runs BEFORE the sync so a slow sync never starves it.
+- Test suites: `tests/hooks-linkage.test.sh` (12), `tests/memory-sync.test.sh` (8).
+
 ## 0.6.1 — 2026-07-23
 
 ### Fixed (auto-recall reliability — ADR-006 phase 0)
