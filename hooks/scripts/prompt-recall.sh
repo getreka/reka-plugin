@@ -19,9 +19,20 @@ command -v curl >/dev/null 2>&1 || exit 0
 PROMPT="$(printf '%s' "$HOOK_INPUT" | jq -r '.prompt // empty' 2>/dev/null || true)"
 [ -n "$PROMPT" ] || exit 0
 
-# Skip slash-commands (own flow) and trivially short prompts.
-case "$PROMPT" in /*) exit 0 ;; esac
+# Skip slash-commands (own flow), trivially short prompts, and SYNTHETIC
+# prompts Claude Code submits through the same UserPromptSubmit path (background
+# task / subagent completions, bash-mode echoes, local command output, interrupt
+# notices): they are not the user speaking, are often 5-30k chars (server 400 on
+# query > 5000) and their recall only pollutes context.
+case "$PROMPT" in
+  /*|'<task-notification>'*|'<system-reminder>'*|'<local-command'*|'<command-name>'*|'<bash-input>'*|'<bash-stdout>'*|'<bash-stderr>'*|'[Request interrupted'*) exit 0 ;;
+esac
 [ "${#PROMPT}" -lt 30 ] && exit 0
+# Truncate the query: rag-api recallMemorySchema caps query at 5000 chars, and
+# the head of a prompt carries the intent anyway (pasted logs go in the tail).
+MAXQ="${REKA_RECALL_MAX_QUERY:-1500}"
+[[ "$MAXQ" =~ ^[0-9]+$ ]] || MAXQ=1500
+[ "${#PROMPT}" -gt "$MAXQ" ] && PROMPT="${PROMPT:0:$MAXQ}"
 
 # Resolve env durably.
 HOOK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -35,6 +46,22 @@ API_KEY="${RAG_API_KEY:-}"
 PROJECT="${RAG_PROJECT_NAME:-${REKA_PROJECT:-default}}"
 SESSION_ID="${RAG_SESSION_ID:-}"
 
+# Session linkage: CLAUDE_ENV_FILE exports from session-start reach only the
+# BashTool, never this hook — so resolve the RAG session via the CC session id
+# (hook stdin session_id) and the map session-start wrote.
+CC_SID=""
+if type reka_cc_session_id >/dev/null 2>&1; then
+  CC_SID="$(reka_cc_session_id "$HOOK_INPUT")"
+  if [ -z "$SESSION_ID" ] && [ -n "$CC_SID" ]; then
+    reka_map_read "$CC_SID"
+    if [ -n "${REKA_MAP_SESSION:-}" ]; then
+      SESSION_ID="$REKA_MAP_SESSION"
+      [ -n "${REKA_MAP_PROJECT:-}" ] && PROJECT="$REKA_MAP_PROJECT"
+      [ -n "${REKA_MAP_URL:-}" ] && API_URL="$REKA_MAP_URL"
+    fi
+  fi
+fi
+
 # Empty key against a keyed remote server is a guaranteed silent 401 (the
 # historical 0-firings cause). Anonymous is only a real path on localhost dev.
 if [ -z "$API_KEY" ]; then
@@ -45,11 +72,13 @@ if [ -z "$API_KEY" ]; then
 fi
 
 # Throttle: at most one auto-recall per REKA_RECALL_THROTTLE_SEC per session.
+# Keyed by RAG session, else CC session (never a global "nosess" shared by every
+# concurrent session on the machine).
 THROTTLE="${REKA_RECALL_THROTTLE_SEC:-45}"
 [[ "$THROTTLE" =~ ^[0-9]+$ ]] || THROTTLE=45
 STATE_DIR="${RAG_STATE_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/reka}"
 mkdir -p "$STATE_DIR" 2>/dev/null || true
-STAMP="$STATE_DIR/recall-${SESSION_ID:-nosess}.stamp"
+STAMP="$STATE_DIR/recall-${SESSION_ID:-${CC_SID:-nosess}}.stamp"
 NOW="$(date +%s 2>/dev/null || echo 0)"
 if [ -f "$STAMP" ]; then
   LAST="$(cat "$STAMP" 2>/dev/null || echo 0)"
@@ -62,8 +91,14 @@ fi
 # X-Project-Name header (overwritten from the key server-side); a mismatched
 # body projectName would 403 (enforceProjectScope). sessionId makes the server
 # log retrieval surface='recall' (the measurable signal).
-BODY="$(jq -nc --arg q "$PROMPT" --argjson lim 3 --arg s "$SESSION_ID" \
-  '{query:$q, graphRecall:true, limit:$lim} + (if $s=="" then {} else {sessionId:$s} end)' \
+# Relevance floor: below it the server returns [] and we inject nothing —
+# an honest abstention beats injecting the closest junk (trial: 3 "attractor"
+# memories filled 38% of injected slots at 0.45-0.64 while true hits scored
+# 0.89+). Tune/disable with REKA_RECALL_MIN_SCORE (0 = off).
+MINSCORE="${REKA_RECALL_MIN_SCORE:-0.65}"
+[[ "$MINSCORE" =~ ^[0-9]+(\.[0-9]+)?$ ]] || MINSCORE=0.65
+BODY="$(jq -nc --arg q "$PROMPT" --argjson lim 3 --arg s "$SESSION_ID" --argjson ms "$MINSCORE" \
+  '{query:$q, graphRecall:true, limit:$lim, minScore:$ms} + (if $s=="" then {} else {sessionId:$s} end)' \
   2>/dev/null || true)"
 [ -n "$BODY" ] || exit 0
 
@@ -92,7 +127,7 @@ BLOCK="$(printf '%s' "$RESP" | jq -r '
 ' 2>/dev/null || true)"
 
 if [ -n "$BLOCK" ]; then
-  reka_log "prompt-recall OK: injected block (project=$PROJECT session=${SESSION_ID:-none})"
+  reka_log "prompt-recall OK: injected block (project=$PROJECT session=${SESSION_ID:-none} cc=${CC_SID:-none})"
   printf '%s\n' "$BLOCK"
 else
   reka_log "prompt-recall OK: no hits (project=$PROJECT)"
